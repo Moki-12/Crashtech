@@ -112,8 +112,9 @@ void menu(year_data *tab){
 
 int main (int arc, int **argv){
     year_data tab[20];
+    FILE *f = fopen(argv[1], "r");
 initTab(tab);
-lire_fichier_année_accidents (&arc, tab, argv);
+lire_fichier_année_accidents (f, tab, argv[1]);
 menu(tab);
     return 0;
 }
