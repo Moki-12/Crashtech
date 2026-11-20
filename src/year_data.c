@@ -25,13 +25,25 @@ void initTab (year_data *tab){
     }
 }
 
+int trouver_indice (year_data *tab, int année){
+    if (tab == NULL){
+        return -1;
+    }
+    for (int i=0; i<20; i++){
+        if (tab[i].annee == année){
+            return i;
+        }
+    }
+    return -1;
+}
+
 
 void lire_fichier_severite (FILE *f, year_data *tab, char *nom_fichier, int i){
     if (f == NULL || nom_fichier == NULL){
         exit(3);
     }
     int victime;
-    fscanf(f, "%*s;%*s;%*s;%d", &victime); // on alors tout ca dans la fonction dapres
+    fscanf(f, "%*d;%*d;%*d;%d", &victime); // on alors tout ca dans la fonction dapres
     if (victime == 1){
         tab[i].severite[0]++;
     }
@@ -55,7 +67,6 @@ void lire_fichier_année_accidents (FILE *f, year_data *tab, char *nom_fichier){
         exit(2);
     }
     char ligne [200];
-    int i = 0;
     int année_fichier;
     int accident_prec = 0;
     int accident_act;
@@ -64,12 +75,12 @@ void lire_fichier_année_accidents (FILE *f, year_data *tab, char *nom_fichier){
     while ((fgetc(f)) != EOF){
         fseek(f, -1, SEEK_CUR);
     fscanf (f, "%d;%d", &année_fichier, &accident_act);
-    if (année_fichier != tab[i].annee){
-        i++;
-    }
-    if (accident_act != accident_prec){
+    int i = trouver_indice(tab, année_fichier);
+    if (i != -1){
+      if (accident_act != accident_prec){
         tab[i].accidents++;
         accident_prec = accident_act;
+    }  
     }
     lire_fichier_severite(f, tab, nom_fichier, i);
     fgets (ligne, 199, f);
@@ -81,10 +92,10 @@ void lire_fichier_année_accidents (FILE *f, year_data *tab, char *nom_fichier){
 void affichage (year_data *tab, int annee){
     int p = annee - 2005;
     printf("Nombre d'accident : %d\n", tab[p].accidents);
-    printf("indemnes : %d\n", tab[p].severite[1]);
-    printf("tués : %d\n", tab[p].severite[2]);
-    printf("Blésés graves: %d\n", tab[p].severite[3]);
-    printf("Blésés légés : %d\n", tab[p].severite[4]);
+    printf("indemnes : %d\n", tab[p].severite[0]);
+    printf("tués : %d\n", tab[p].severite[1]);
+    printf("Blésés graves: %d\n", tab[p].severite[2]);
+    printf("Blésés légés : %d\n", tab[p].severite[3]);
 }
 
 
@@ -95,7 +106,7 @@ void menu(year_data *tab){
     int annee;
     int choix;
     do{
-        printf("Quelle année souhaitez-vous consulter");
+        printf("Quelle année souhaitez-vous consulter ?\n");
             if (scanf("%d", &annee) != 1){
                 exit(1);
             }
@@ -113,7 +124,7 @@ void menu(year_data *tab){
 
 int main (int arc, char **argv){
     year_data tab[20];
-    FILE *f = fopen(argv[1], "r");
+    FILE *f = NULL;
 initTab(tab);
 lire_fichier_année_accidents (f, tab, argv[1]);
 menu(tab);
