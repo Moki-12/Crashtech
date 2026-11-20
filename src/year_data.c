@@ -60,6 +60,7 @@ void lire_fichier_année_accidents (FILE *f, year_data *tab, char *nom_fichier){
     int accident_prec = 0;
     int accident_act;
     f = fopen(nom_fichier, "r");
+    fgets(ligne, 199, f);
     while ((fgetc(f)) != EOF){
         fseek(f, -1, SEEK_CUR);
     fscanf (f, "%d;%d", &année_fichier, &accident_act);
