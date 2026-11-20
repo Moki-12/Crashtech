@@ -1,20 +1,29 @@
-typedef struct {
-int femme;
-int homme;
-int non-genre;
-} Genre;
-
-typedef struct {
-int conducteur;
-int passager;
-int pieton;
-} Type;
-
 typedef struct chainon {
     int age;
-    Genre *g;
-    Type *p;
+    int femme;
+int homme;
+int non_genre;
+int pieton;
+int conducteur;
+int passager;
     struct chainon *suivant;
 } age_data;
 
-age_data creation
+age_data *creation(int a){
+age_data *nv = malloc(sizeof(age_data));
+if(nv == NULL){
+exit(1);
+}
+nv->age = a;
+nv->femme = 0;
+nv->homme = 0;
+nv->non_genre = 0;
+nv->pieton = 0;
+nv->conducteur = 0;
+nv->passager = 0;
+}
+
+age_data zjout(age_data tete, int a)[
+age_data *p = tete;
+while( p!= NULL){
+if ( a <= 
