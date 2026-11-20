@@ -95,7 +95,7 @@ void menu(year_data *tab){
     int annee;
     int choix;
     do{
-        printf("Quelle année souaitez-vous consulter");
+        printf("Quelle année souhaitez-vous consulter");
             if (scanf("%d", &annee) != 1){
                 exit(1);
             }
@@ -110,7 +110,8 @@ void menu(year_data *tab){
     }while(choix != 0);
 }
 
-int main (int arc, int **argv){
+
+int main (int arc, char **argv){
     year_data tab[20];
     FILE *f = fopen(argv[1], "r");
 initTab(tab);
