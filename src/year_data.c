@@ -3,7 +3,7 @@
 #include <string.h>
 
 typedef struct {
-    int année;
+    int annee;
     int accidents;
     int severite[4];
 } year_data;
@@ -17,7 +17,7 @@ void viderBuffer() {
 
 void initTab (year_data tab){
     for (int i=0; i<20; i++){
-        tab[i].année = 2005 + i;
+        tab[i].annee = 2005 + i;
         tab[i].accidents = 0;
         for (int j=0; j<4; j++){
             tab[i].severite[j] = 0;
@@ -74,6 +74,39 @@ void lire_fichier_année_accidents (FILE *f, year_data tab, char *nom_fichier){
     fgets (ligne, 199, f);
     }
     fclose(f);
+}
+
+
+void affichage ( year_data *tab, int annee){
+    int p = annee - 2005;
+    printf("Nombre d'accident : %d\n", tab[p]->accident);
+    printf("indemnes : %d\n", p->severité[1]);
+    printf("tués : %d\n", p->sévérité[2]);
+    printf("Blésés graves: %d\n", p->sévérité[3]);
+    printf("Blésés légés : %d\n", p->sévérité[4]);
+}
+
+void menu(year_data *tab){
+    if(tab == NULL){
+        return tab;
+    }
+    int annee;
+    int choix;
+    do{
+        printf("Quelle année souaitez-vous consulter"){
+            if scanf("%d", &annee) ! = 1){
+                exit(1);
+            }
+            else if(annee >= 2005 && annee <= 2025 ){
+                affichage(tab, annee);
+            }
+            else{
+                printf("l'année n'est pas valide");
+            }
+        }
+        printf("Voulez-vous quitter ? (oui (1) ou non (0))");
+        scanf ("%d", &choix);
+    }while(choix != 0);
 }
 
 int main (int arc, int **argv){
