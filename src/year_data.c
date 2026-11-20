@@ -77,13 +77,13 @@ void lire_fichier_année_accidents (FILE *f, year_data tab, char *nom_fichier){
 }
 
 
-void affichage ( year_data *tab, int annee){
+void affichage ( year_data tab, int annee){
     int p = annee - 2005;
-    printf("Nombre d'accident : %d\n", tab[p]->accident);
-    printf("indemnes : %d\n", p->severité[1]);
-    printf("tués : %d\n", p->sévérité[2]);
-    printf("Blésés graves: %d\n", p->sévérité[3]);
-    printf("Blésés légés : %d\n", p->sévérité[4]);
+    printf("Nombre d'accident : %d\n", tab[p].accident);
+    printf("indemnes : %d\n", tab[p].severité[1]);
+    printf("tués : %d\n", tab[p].sévérité[2]);
+    printf("Blésés graves: %d\n", tab[p].sévérité[3]);
+    printf("Blésés légés : %d\n", tab[p].sévérité[4]);
 }
 
 void menu(year_data *tab){
@@ -98,7 +98,7 @@ void menu(year_data *tab){
                 exit(1);
             }
             else if(annee >= 2005 && annee <= 2025 ){
-                affichage(tab, annee);
+                affichage(&tab, annee);
             }
             else{
                 printf("l'année n'est pas valide");
