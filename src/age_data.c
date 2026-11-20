@@ -1,10 +1,8 @@
-typedef struct chainon {
-    int age;
-    int type;
-    int genre;
-    struct chainon *suivant;
-} age_data;
-
+typedef struct {
+    int année;
+    int accidents;
+    int severite[4];
+} year_data;
 
 void lire_fichier_severite (FILE *f, year_data tab, char *nom_fichier, int i){
     if (f == NULL || nom_fichier == NULL){
