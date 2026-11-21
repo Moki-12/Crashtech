@@ -90,35 +90,50 @@ void lire_fichier_année_accidents (FILE *f, year_data *tab, char *nom_fichier){
 
 
 void affichage (year_data *tab, int annee){
+    if (tab == NULL){
+        exit(4);
+    }
     int p = annee - 2005;
+    if(p <0 || p>= 20){
+        printf("L'année est hors de portée.\n");
+        exit(5);
+    }
+    printf("-----En %d-----\n", annee);
     printf("Nombre d'accident : %d\n", tab[p].accidents);
-    printf("indemnes : %d\n", tab[p].severite[0]);
-    printf("tués : %d\n", tab[p].severite[1]);
-    printf("Blésés graves: %d\n", tab[p].severite[2]);
-    printf("Blésés légés : %d\n", tab[p].severite[3]);
+    printf("indemnes          : %d\n", tab[p].severite[0]);
+    printf("tués              : %d\n", tab[p].severite[1]);
+    printf("Blésés graves     : %d\n", tab[p].severite[2]);
+    printf("Blésés légés      : %d\n", tab[p].severite[3]);
 }
 
 
 void menu(year_data *tab){
     if(tab == NULL){
-        exit(5);
+        exit(6);
     }
     int annee;
     int choix;
+    printf("============================\n");
+    printf("STATISTIQUES PAR ANNEE\n"),
+    printf("============================\n");
     do{
         printf("Quelle année souhaitez-vous consulter ?\n");
             if (scanf("%d", &annee) != 1){
-                exit(1);
+                viderBuffer();
             }
-            else if(annee >= 2005 && annee <= 2025 ){
+            else if(annee >= 2005 && annee <= 2024 ){
                 affichage(tab, annee);
             }
             else{
                 printf("l'année n'est pas valide");
             }
-        printf("Voulez-vous quitter ? (oui (1) ou non (0))");
-        scanf ("%d", &choix);
-    }while(choix != 0);
+        printf("Souhaitez-vous consulter une autre année ?\n-1 Oui \n-0 Non (quitter))\nChoix: ");
+        if(scanf ("%d", &choix) != 1){
+            printf("Erreur\n");
+            viderBufffer();
+        }
+    }while(choix == 1);
+
 }
 
 
