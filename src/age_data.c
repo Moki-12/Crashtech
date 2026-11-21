@@ -30,12 +30,12 @@ return nv;
 void remplir_chainon (age_data *a, int g, int t){
     if (a == NULL){
         exit(4);
+    }
         int indice_g = g-1;
         int indice_t = t-1;
         if (indice_t >= 0 && indice_t < 3 && indice_g >= 0 && indice_g < 3){
         a->tab[indice_t][indice_g]++;
         }
-}
 }
 
 void ajouter (list_age *l, age_data *a){
