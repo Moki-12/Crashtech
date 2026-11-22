@@ -7,7 +7,7 @@ typedef struct liste2 {
 } Liste_victimes;
 
 typedef struct liste {
-    char *vehicule_id;
+    int vehicule_id;
     int purpose;
     struct liste *suivant;
     Liste_victimes *l_vi;
@@ -46,7 +46,7 @@ nouveau->suivant = NULL;
 return nouveau;
 }
 
-Liste_vehicules ajouterl_ve (int p, char *v){
+Liste_vehicules ajouterl_ve (int p, int v_id){
     if (v == NULL){
         return NULL;
     }
@@ -55,34 +55,121 @@ Liste_vehicules ajouterl_ve (int p, char *v){
         return NULL;
     }
     nouveau->purpose = p;
-    nouveau->vehicule_id = malloc(sizeof((strlen(v))+1));
-    strcpy(vehicule_id, v);
+    nouveau->vehicule_id = v_id;
     nouveau->suivant = NULL;
     return nouveau;
 }
 
-pArbre ajouter_noeud (pArbre a, int c){
+pArbre rotationgauche (pArbre a){
     if (a == NULL){
+        return NULL;
+    }
+    pArbre pivot;
+    int eq_a;
+    int eq_p;
+    pivot = a->droit;
+    a->droit = pivot->gauche;
+    pivot->gauche = a;
+    eq_a = a->equilibre;
+    eq_p = pivot->equilibre;
+    a->equilibre = eq_a - max(eq_p - 0) - 1;
+    pivot->equilibre = min(eq_a-2, eq_a+eq_p-2, eq_p-1);
+    a = pivot;
+    return a;
+}
+
+pArbre rotationdroit (pArbre a){
+    if (a == NULL){
+        return NULL;
+    }
+    pArbre pivot;
+    int eq_a;
+    int eq_p;
+    pivot = a->gauche;
+    a->gauche = pivot->droit;
+    pivot->droit = a;
+    eq_a = a->equilibre;
+    eq_p = pivot->equilibre;
+    a->equilibre = eq_a - min(eq_p, 0) + 1;
+    pivot->equilibre = max(eq_a+2, eq_a+eq_p+2, eq_p+1);
+    a = pivot;
+    return a;
+}
+
+pArbre doublerotationgauche (pArbre a){
+    if (a == NULL){
+        return NULL;
+    }
+    a->droit = rotationdroit(a->droit);
+    return rotationgauche(a);
+}
+
+pArbre doublerotationdroit(pArbre a){
+    if (a == NULL){
+        return NULL;
+    }
+    a->gauche = rotationgauche(a->gauche);
+    return rotationdroit(a);
+}
+
+pArbre equilibrage (pArbre a){
+    if (a == NULL){
+        return NULL;
+    }
+    if (a->equilibre >= 2){
+        if (a->droit->equilibre >= 0){
+            return rotationgauche(a);
+        }
+        else {
+            return doublerotationgauche(a);
+        }
+    }
+    else if (a->equilibre <= -2){
+        if (a->gauche->equilibre <= 0){
+            return rotationdroit(a);
+        }
+        else {
+            return doublerotationdroit(a);
+        }
+    }
+    return a;
+}
+
+pArbre ajouter_noeud (pArbre a, int c, int *h){
+    if (a == NULL){
+        *h = 1;
         return creerNoeud(c);
     }
     if (c < a->clé){
-        a->gauche = ajouter_noeud(a->gauche, c);
+        a->gauche = ajouter_noeud(a->gauche, c, h);
+        *h = -*h;
     }
     else if (c > a->clé){
-        a->droit = ajouter_noeud(a->gauche, c);
+        a->droit = ajouter_noeud(a->droit, c, h);
+    }
+    if (*h != 0){
+        a->equilibre += *h;
+        a = equilibrage(a);
+        if (a->equilibre == 0){
+            *h = 0;
+        }
+        else {
+            *h = 1;
+        }
     }
     return a;
 }
 
 pArbre verif_existe (pArbre a, int c){
-    pArbre courant = a;
-    while (courant != NULL){
-        if (courant->clé == c){
-            return courant;
-            courant = courant->suivant;
-        }
+    if (a == NULL || a->clé == c){
+        return a;
     }
-    return ajouter_noeud(a, c);
+    else if (c < a->clé){
+        return a->gauche = verif_existe(a->gauche, c);
+    }
+    else {
+        return a->droit = verif_existe(a->droit, c);
+    }
 }
 
 int collée_chaine (int nb1, int nb2){
@@ -90,6 +177,20 @@ int collée_chaine (int nb1, int nb2){
     sprintf (collée, "%d%d", nb1, nb2);
     int result = atoi(collée);
     return result;
+}
+
+Liste_vehicules *verif_vehicules (pArbre a, int v_id){
+    if (a == NULL){
+        return NULL;
+    }
+    Liste_vehicules *courant = a->l_ve;
+    while (courant != NULL){
+        if (courant->vehicule_id == v_id){
+            return courant;
+        }
+        courant = courant->suivant;
+    }
+    return NULL;;
 }
 
 void lire_fichier (FILE *f, pArbre a, char *nom_fichier){
@@ -100,12 +201,32 @@ void lire_fichier (FILE *f, pArbre a, char *nom_fichier){
     int year;
     int collision_id;
     int c;
+    int purpose;
+    int v_id;
     f = fopen(nom_fichier, "r");
     fgets(ligne, 199, f);
     while ((fgetc(f)) != NULL){
         fseek(f, -1, SEEK_CUR);
-        fscanf (f, "%d;%d", &year, &collision_id);
+        fscanf (f, "%d;%d;%d;%*d;%*d;%*d;%*d;%*d;%d", &year, &collision_id, &v_id, &purpose);
         c = collée_chaine(year, collision_id);
-        a = verif_existe(a, c);
+        pArbre existe_noeud = verif_existe(a, c);
+        if (existe_noeud == NULL){
+            int h = 0;
+            a = ajouter_noeud(a, c, &h);
+         existe_noeud = verif_existe(a, c);   
+        }
+        Liste_vehicules *existe_vehicule;
+        existe_vehicule = verif_vehicules(a, v_id);
+        if (existe_vehicule != NULL){
+            if (existe_vehicule->purpose == 0 || existe_vehicule->purpose == -1){
+                existe_vehicule->purpose = purpose;
+            }
+        }
+        else {
+            Liste_vehicules *new_vehicules = ajouterl_ve(purpose, v_id);
+            new_vehicules->suivant = existe_noeud->l_ve;
+            existe_noeud->l_ve = new_vehicules;
+            existe_vehicule = new_vehicules;
+        }
     }
 }
