@@ -126,12 +126,30 @@ void affichage (list_age *l, int  filtre_type, int filtre_genre){
     }
 }
 
-/*void affichage (list_age *l, int filtre_type, int filtre_genre){
+/*char *nom_type(int t){
+    switch(t){
+        case 1: return "Conducteurs";
+        case 2 : return "Passagers";
+        case 3:  return "Piétons";
+        default: return "Tous les types";
+    }
+}
+
+char *nom_genre(int s){
+    switch (s){
+        case 1: return "Hommes";
+        case 2: return "Femmes";
+        case 3: return "pas de genre";
+        default: return "Tous les genres";
+    }
+}
+
+void affichage (list_age *l, int filtre_type, int filtre_genre){
     if (l == NULL){
         exit(7);
     }
     printf("======================================================\n");
-    printf("PYRAMIDE DES AGES - %s - %s\n", filtre_genre, filtre_type);
+    printf("PYRAMIDE DES AGES - %s - %s\n", nom_genre(filtre_genre), nom_type(filtre_type));
     printf("======================================================\n\n");
     printf("(1# = 0.25 %%)\n");
     age_data *courant = l->tete;
@@ -172,7 +190,7 @@ void menu(list_age *l){
             }
         }while (filtre_type < 0 || filtre_type > 3);
         do {
-            printf("Choisissez le genre de la personne :\n-0 Tous\n-1 Femme\n-2 Homme\n-3 Non genre\nChoix : ");
+            printf("Choisissez le genre de la personne :\n-0 Tous\n-1 Homme\n-2 Femme\n-3 Non genre\nChoix : ");
             if (scanf("%d", &flitre_genre) != 1 || filtre_genre < 0 || filtre_genre > 3){
                 viderBuffer();
                 printf("Erreur : entrez un chiffre entre 0 et 3.\n")
