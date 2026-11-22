@@ -19,6 +19,7 @@ if(nv == NULL){
 exit(1);
 }
 nv->age = a;
+nv->suivant = NULL;
 for (int i=0; i<3; i++){
     for (int j=0; j<3; j++){
         nv->tab[i][j] = 0;
@@ -124,6 +125,67 @@ void affichage (list_age *l, int  filtre_type, int filtre_genre){
         courant = courant->suivant;
     }
 }
+
+/*void affichage (list_age *l, int filtre_type, int filtre_genre){
+    if (l == NULL){
+        exit(7);
+    }
+    printf("======================================================\n");
+    printf("PYRAMIDE DES AGES - %s - %s\n", filtre_genre, filtre_type);
+    printf("======================================================\n\n");
+    printf("(1# = 0.25 %%)\n");
+    age_data *courant = l->tete;
+    while (courant != NULL){
+        int total_tous = calcul_total_filtre(courant, 0, 0);
+        int nb = calcul_total_filtre(courant, filtre_type, filtre_genre);
+        float pct = calcul_pct(nb, total_tous);
+        int bloc = (int)(pct * 4);
+        if (bloc > 40){
+            bloc = 40;
+        }
+        printf("%d ans : %d  %2f %%", courant->age, nb, pct);
+        for (int i = 0; i < bloc; i++){
+            printf("#");
+        }
+        printf("\n");
+        courant = courant->suivant;
+    }
+}
+
+
+void menu(list_age *l){ 
+    if (l == NULL) {
+        exit(10);
+    }
+    int choix;
+    int filtre_type;
+    int filtre_genre;
+    printf("============================\n");
+    printf("STATISTIQUES PAR AGE\n");
+    printf("============================\n");
+    do{
+       do{
+            printf("Choisissez le type de personne :\n-0 Tous\n-1 Conducteur\n -2 Passager\n-3 Pieton\nChoix : ");
+            if (scanf("%d", &filtre_type) != 1 || filtre_type < 0 || filtre_type > 3){
+                viderBuffer();
+                printf("Erreur : entrez un chiffre entre 0 et 3.\n")
+            }
+        }while (filtre_type < 0 || filtre_type > 3);
+        do {
+            printf("Choisissez le genre de la personne :\n-0 Tous\n-1 Femme\n-2 Homme\n-3 Non genre\nChoix : ");
+            if (scanf("%d", &flitre_genre) != 1 || filtre_genre < 0 || filtre_genre > 3){
+                viderBuffer();
+                printf("Erreur : entrez un chiffre entre 0 et 3.\n")
+            }
+        }while (filtre_genre < 0 || filtre_genre > 3);
+        affichage(l, filtre_type, filtre_genre);
+        printf("Souhaitez-vous consulter d'autres statistiques ?\n-1 Oui\n -2 Non (quitter)\nChoix : ");
+        if(scanf("%d", &choix) != 1){
+            viderBufffer();
+            choix = 0;
+        }
+    }while (choix == 1);
+}*/
 
 int main (int argc, char **argv){
     list_age *Liste = NULL;
