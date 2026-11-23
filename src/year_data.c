@@ -38,53 +38,60 @@ int trouver_indice (year_data *tab, int année){
 }
 
 
-void lire_fichier_severite (FILE *f, year_data *tab, char *nom_fichier, int i){
-    if (f == NULL || nom_fichier == NULL){
-        exit(3);
-    }
-    int victime;
-    fscanf(f, "%*d;%*d;%*d;%d", &victime); // on alors tout ca dans la fonction dapres
-    if (victime == 1){
-        tab[i].severite[0]++;
-    }
-    else if (victime == 2){
-        tab[i].severite[1]++;
-    }
+void lire_fichier_année_accidents(FILE *f, year_data *tab, char *nom_fichier){
 
-//souhaite consulter les statistiques. L’utilisateur pourra regarder
-
-//autant d’années qu’il le souhaite et quittera le programm
-    else if (victime == 3){
-        tab[i].severite[2]++;
-    }
-    else if (victime == 4){
-        tab[i].severite[3]++;
-    }
-}
-
-void lire_fichier_année_accidents (FILE *f, year_data *tab, char *nom_fichier){
-    if (f == NULL || nom_fichier == NULL){
+    if (nom_fichier == NULL || tab == NULL){
         exit(2);
     }
-    char ligne [200];
-    int année_fichier;
-    int accident_prec = 0;
-    int accident_act;
+
     f = fopen(nom_fichier, "r");
-    fgets(ligne, 199, f);
-    while ((fgetc(f)) != EOF){
-        fseek(f, -1, SEEK_CUR);
-    fscanf (f, "%d;%d", &année_fichier, &accident_act);
-    int i = trouver_indice(tab, année_fichier);
-    if (i != -1){
-      if (accident_act != accident_prec){
-        tab[i].accidents++;
-        accident_prec = accident_act;
-    }  
+
+    if (f == NULL){
+        perror("Erreur ouverture fichier");
+        exit(2);
     }
-    lire_fichier_severite(f, tab, nom_fichier, i);
-    fgets (ligne, 199, f);
+
+    char ligne[200];
+    int annee_fichier;
+    int accident_act;
+    int victime;
+
+    int annee_prec = -1;
+    int accident_prec = -1;
+
+    fgets(ligne, sizeof(ligne), f); // Ignore l'en-tête
+
+    while (fgets(ligne, sizeof(ligne), f) != NULL){
+
+        if (sscanf(ligne, "%d;%d;%*d;%*d;%*d;%d",
+                   &annee_fichier,
+                   &accident_act,
+                   &victime) != 3){
+            continue;
+        }
+
+        int i = trouver_indice(tab, annee_fichier);
+
+        if (i == -1){
+            continue;
+        }
+        
+        // Comptage des accidents
+        if (annee_fichier != annee_prec ||
+            accident_act != accident_prec){
+
+            tab[i].accidents++;
+
+            annee_prec = annee_fichier;
+            accident_prec = accident_act;
+        }
+
+        // Comptage des victimes par sévérité
+        if (victime >= 1 && victime <= 4){
+            tab[i].severite[victime - 1]++;
+        }
     }
+
     fclose(f);
 }
 
@@ -130,7 +137,7 @@ void menu(year_data *tab){
         printf("Souhaitez-vous consulter une autre année ?\n-1 Oui \n-0 Non (quitter))\nChoix: ");
         if(scanf ("%d", &choix) != 1){
             printf("Erreur\n");
-            viderBufffer();
+            viderBuffer();
         }
     }while(choix == 1);
 
@@ -139,7 +146,7 @@ void menu(year_data *tab){
 
 int main (int arc, char **argv){
     year_data tab[20];
-    FILE *f = NULL;
+    FILE *f = fopen(argv[1], "r");
 initTab(tab);
 lire_fichier_année_accidents (f, tab, argv[1]);
 menu(tab);
