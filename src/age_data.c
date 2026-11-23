@@ -67,9 +67,9 @@ age_data *verif_exist (list_age *l, int age){
 }
 
 void lire_ficher (FILE *f, age_data *a_d, char *nom_fichier, list_age *l){
-    if (f == NULL || a_d == NULL || nom_fichier == NULL){
+    /*if (f == NULL || a_d == NULL || nom_fichier == NULL){
         exit(2);
-    }
+    }*/
     int age;
     int année;
     int naissance;
@@ -111,22 +111,7 @@ int calcul_total_filtre (age_data *a, int filtre_type, int filtre_genre){
     return total;
 }
 
-void affichage (list_age *l, int  filtre_type, int filtre_genre){
-    if (l == NULL){
-        exit(7);
-    }
-    age_data *courant = l->tete;
-    while (courant != NULL){
-        printf ("%d ans : ", courant->age);
-        int total_tous = calcul_total_filtre (courant, 0, 0);
-        int total_filtre = calcul_total_filtre(courant, filtre_type, filtre_genre);
-        int pct_filtre = calcul_pct (total_filtre, total_tous);
-        printf ("   %f%\n", pct_filtre);
-        courant = courant->suivant;
-    }
-}
-
-/*char *nom_type(int t){
+char *nom_type(int t){
     switch(t){
         case 1: return "Conducteurs";
         case 2 : return "Passagers";
@@ -161,7 +146,7 @@ void affichage (list_age *l, int filtre_type, int filtre_genre){
         if (bloc > 40){
             bloc = 40;
         }
-        printf("%d ans : %d  %2f %%", courant->age, nb, pct);
+        printf("%3d ans : %8d  %5.2f %%", courant->age, nb, pct);
         for (int i = 0; i < bloc; i++){
             printf("#");
         }
@@ -185,28 +170,47 @@ void menu(list_age *l){
        do{
             printf("Choisissez le type de personne :\n-0 Tous\n-1 Conducteur\n -2 Passager\n-3 Pieton\nChoix : ");
             if (scanf("%d", &filtre_type) != 1 || filtre_type < 0 || filtre_type > 3){
-                viderBuffer();
-                printf("Erreur : entrez un chiffre entre 0 et 3.\n")
+                //viderBuffer();
+                printf("Erreur : entrez un chiffre entre 0 et 3.\n");
             }
         }while (filtre_type < 0 || filtre_type > 3);
         do {
             printf("Choisissez le genre de la personne :\n-0 Tous\n-1 Homme\n-2 Femme\n-3 Non genre\nChoix : ");
-            if (scanf("%d", &flitre_genre) != 1 || filtre_genre < 0 || filtre_genre > 3){
-                viderBuffer();
-                printf("Erreur : entrez un chiffre entre 0 et 3.\n")
+            if (scanf("%d", &filtre_genre) != 1 || filtre_genre < 0 || filtre_genre > 3){
+                //viderBuffer();
+                printf("Erreur : entrez un chiffre entre 0 et 3.\n");
             }
         }while (filtre_genre < 0 || filtre_genre > 3);
         affichage(l, filtre_type, filtre_genre);
         printf("Souhaitez-vous consulter d'autres statistiques ?\n-1 Oui\n -2 Non (quitter)\nChoix : ");
         if(scanf("%d", &choix) != 1){
-            viderBufffer();
+            //viderBuffer();
             choix = 0;
         }
     }while (choix == 1);
-}*/
+}
 
-int main (int argc, char **argv){
-    list_age *Liste = NULL;
-    age_data *Chaine = NULL;
-    
+int main(int argc, char **argv) {
+    char *nom_fichier;
+
+    if (argc == 2) {
+        nom_fichier = argv[1];
+    } else if (argc >= 3 && strcmp(argv[1], "AGE_DATA") == 0) {
+        nom_fichier = argv[2];
+    } else {
+        fprintf(stderr, "Usage : %s AGE_DATA <fichier.csv>\n", argv[0]);
+        return 1;
+    }
+
+    list_age *Liste = malloc(sizeof(list_age));
+    if (Liste == NULL) {
+        perror("Erreur allocation liste");
+        return 1;
+    }
+    Liste->tete = NULL;
+
+    lire_ficher(NULL, NULL, nom_fichier, Liste);
+    menu(Liste);
+
+    return 0;
 }
