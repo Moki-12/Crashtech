@@ -1,4 +1,4 @@
-typedef struct liste2 {
+typedef struct liste2 {     // faire max collision par année 
     int type;
     int genre;
     int age;
