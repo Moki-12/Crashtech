@@ -50,20 +50,42 @@ void ajouter (list_age *l, age_data *a){
     l->tete = a;
 }
 
-age_data *verif_exist (list_age *l, int age){
-    if (l == NULL){
+age_data *verif_exist (liste_age *l, int age){
+    if(l == NULL){
         exit(3);
     }
-    age_data *a = l->tete;
-    while (a != NULL){
-        if (a->age == age){
-            return a;
-        }
-        a = a->suivant;
+    int *p = l->tete;
+    int *prece = NULL;
+    while(p != NULL && p->age < age){
+        p = p->suivant;
+        prece = p;
+    }
+    if(a!= NULL && a->age == age){
+        return a;
     }
     age_data *nv = creation(age);
-    ajouter(l, nv);
+    nv->suivant = a;
+    if(prece == NULL){
+        l->tete = nv;
+    }
+    else{
+        prece->suivant = nv;
+    }
     return nv;
+}
+
+void libere_liste(liste_age *l){
+    if (l == NULL){
+        exit(1);
+    }
+    age_data *p = l->tete;
+    age_data *suivant = NULL;
+
+    while(p!= NULL){
+        suivant = p->suivant;
+        free(p);
+        p = suivant;
+    }
 }
 
 void lire_ficher (FILE *f, age_data *a_d, char *nom_fichier, list_age *l){
