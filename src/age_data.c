@@ -50,21 +50,21 @@ void ajouter (list_age *l, age_data *a){
     l->tete = a;
 }
 
-age_data *verif_exist (liste_age *l, int age){
+age_data *verif_exist (list_age *l, int age){
     if(l == NULL){
         exit(3);
     }
-    int *p = l->tete;
-    int *prece = NULL;
+    age_data *p = l->tete;
+    age_data *prece = NULL;
     while(p != NULL && p->age < age){
-        p = p->suivant;
         prece = p;
+        p = p->suivant;
     }
-    if(a!= NULL && a->age == age){
-        return a;
+    if(p!= NULL && p->age == age){
+        return p;
     }
     age_data *nv = creation(age);
-    nv->suivant = a;
+    nv->suivant = p;
     if(prece == NULL){
         l->tete = nv;
     }
@@ -74,7 +74,7 @@ age_data *verif_exist (liste_age *l, int age){
     return nv;
 }
 
-void libere_liste(liste_age *l){
+void libere_liste(list_age *l){
     if (l == NULL){
         exit(1);
     }
@@ -152,9 +152,9 @@ char *nom_genre(int s){
 }
 
 void affichage (list_age *l, int filtre_type, int filtre_genre){
-    if (l == NULL){
+    /*if (l == NULL){
         exit(7);
-    }
+    }*/
     printf("======================================================\n");
     printf("PYRAMIDE DES AGES - %s - %s\n", nom_genre(filtre_genre), nom_type(filtre_type));
     printf("======================================================\n\n");
@@ -179,9 +179,9 @@ void affichage (list_age *l, int filtre_type, int filtre_genre){
 
 
 void menu(list_age *l){ 
-    if (l == NULL) {
+    /*if (l == NULL) {
         exit(10);
-    }
+    }*/
     int choix;
     int filtre_type;
     int filtre_genre;
