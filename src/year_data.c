@@ -125,7 +125,7 @@ void menu(year_data *tab){
     printf("============================\n");
     do{
         printf("Quelle année souhaitez-vous consulter ?\n");
-            if (scanf("%d", &annee) != 1){//verif
+            if (scanf("%d", &annee) != 1){
                 viderBuffer();
             }
             else if(annee >= 2005 && annee <= 2024 ){
@@ -135,7 +135,7 @@ void menu(year_data *tab){
                 printf("l'année n'est pas valide");
             }
         printf("Souhaitez-vous consulter une autre année ?\n-1 Oui \n-0 Non (quitter))\nChoix: ");
-        if(scanf ("%d", &choix) != 1){//verif
+        if(scanf ("%d", &choix) != 1){
             printf("Erreur\n");
             viderBuffer();
         }
