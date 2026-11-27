@@ -57,8 +57,8 @@ age_data *verif_exist (list_age *l, int age){
     age_data *p = l->tete;
     age_data *prece = NULL;
     while(p != NULL && p->age < age){
-        prece = p;
         p = p->suivant;
+        prece = p;
     }
     if(p!= NULL && p->age == age){
         return p;
@@ -88,7 +88,7 @@ void libere_liste(list_age *l){
     }
 }
 
-void lire_ficher (FILE *f, char *nom_fichier, list_age *l){
+void lire_ficher (FILE *f, age_data *a_d, char *nom_fichier, list_age *l){
     /*if (f == NULL || a_d == NULL || nom_fichier == NULL){
         exit(2);
     }*/
@@ -99,22 +99,13 @@ void lire_ficher (FILE *f, char *nom_fichier, list_age *l){
     int types;
     char ligne [200];
     f = fopen (nom_fichier, "r");
-    if (f == NULL){
-    perror("Erreur ouverture fichier");
-    return;
-    }
-    if ((fgets (ligne, 199, f)) == NULL){
-    fclose(f);
-    return;
-    }
+    fgets (ligne, 199, f);
     while ((fgetc(f)) != EOF){
         fseek (f, -1, SEEK_CUR);
         fscanf (f, "%d;%*d;%*d;%*d;%d;%*d;%d;%d", &année, &types, &gender, &naissance);
         age = année - naissance;
-        if (age >= 0 && age < 120){
-        age_data *a_d = verif_exist(l, age);
+        a_d = verif_exist(l, age);
         remplir_chainon(a_d, gender, types);
-        }
         fgets (ligne, 199, f);
     }
     fclose(f);
@@ -147,7 +138,7 @@ char *nom_type(int t){
         case 1: return "Conducteurs";
         case 2 : return "Passagers";
         case 3:  return "Piétons";
-        default: return "Tous les types"; /*cy_crash_tech_small_sorted.csv*/
+        default: return "Tous les types";
     }
 }
 
@@ -223,6 +214,7 @@ void menu(list_age *l){
 
 int main(int argc, char **argv) {
     char *nom_fichier;
+
     if (argc == 2) {
         nom_fichier = argv[1];
     } else if (argc >= 3 && strcmp(argv[1], "AGE_DATA") == 0) {
@@ -238,7 +230,8 @@ int main(int argc, char **argv) {
         return 1;
     }
     Liste->tete = NULL;
-    lire_ficher(NULL, nom_fichier, Liste);
+
+    lire_ficher(NULL, NULL, nom_fichier, Liste);
     menu(Liste);
 
     return 0;
