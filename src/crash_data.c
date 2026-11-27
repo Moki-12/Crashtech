@@ -192,31 +192,41 @@ Liste_vehicules *verif_vehicules (pArbre a, int v_id){
     return NULL;;
 }
 
-\*void ajouter_vehicule(Arbre *accident, Liste_vehicules *nv){
-    if (accident->l_ve == NULL){
-        accident->l_ve = nv;
-        return;
+Liste_vehicules *ajouter_vehicule(Arbre **accident, int purpose, int v_id){
+    if (accident == NULL){
+        return NULL;
     }
-    Liste_vehicules *c = accident->l_ve;
-    while (c->suivant != NULL){
-        c = c->suivant;
+    Liste_vehicules *nv_vehicule = creationl_ve(purpose, v_id);
+    if ((*accident)->l_ve == NULL){
+        (*accident)->l_ve = nv_vehicule;
+        return nv_vehicule;
     }
-    c->suivant = nv;
+    else {
+        nv_vehicule->suivant = (*accident)->l_ve;
+        (*accident)->l_ve = nv_vehicule;
+        return nv_vehicule;
+    }
+    return nv_vehicule;
 }
 
-void ajouter_victime(Liste_vehicules *vehicule, Liste_victimes *nv){
-    if (vehicule->l_vi == NULL){
-        vehicule->l_vi = nv;
-        return;
+Liste_victimes *ajouter_victime(Liste_vehicules **vehicule, int type, int genre, int age, int gravite){
+    if (vehicule == NULL){
+        return NULL;
     }
-    Liste_victimes *c = vehicule->l_vi;
-    while (c->suivant != NULL){
-        c = c->suivant;
+    Liste_victimes *nv_victime = creationl_vi(type, genre, age, gravite);
+    if ((*vehicule)->l_vi == NULL){
+        (*vehicule)->l_vi = nv_victime;
+        return nv_victime;
     }
-    c->suivant = nv;
-}*\
+    else {
+        nv_victime->suivant = (*vehicule)->l_vi;
+        (*vehicule)->l_vi = nv_victime;
+        return nv_victime;
+    }
+    return nv_victime;
+}
 
-void lire_fichier (FILE *f, pArbre a, char *nom_fichier){
+void lire_fichier (FILE *f, pArbre *a, char *nom_fichier){
     if (f == NULL || nom_fichier == NULL){
         exit (1);
     }
@@ -226,30 +236,34 @@ void lire_fichier (FILE *f, pArbre a, char *nom_fichier){
     int c;
     int purpose;
     int v_id;
+    int type;
+    int age;
+    int naissance;
+    int gravite;
+    int genre;
     f = fopen(nom_fichier, "r");
     fgets(ligne, 199, f);
     while ((fgetc(f)) != NULL){
         fseek(f, -1, SEEK_CUR);
-        fscanf (f, "%d;%d;%d;%*d;%*d;%*d;%*d;%*d;%d", &year, &collision_id, &v_id, &purpose);
+        fscanf (f, "%d;%d;%d;%*d;%d;%d;%d;%d;%d", &year, &collision_id, &v_id, &type, &gravite, &genre, &naissance, &purpose);
+        age = year - naissance;
         c = collée_chaine(year, collision_id);
         pArbre existe_noeud = verif_existe(a, c);
         if (existe_noeud == NULL){
             int h = 0;
-            a = ajouter_noeud(a, c, &h);
+            *a = ajouter_noeud(a, c, &h);
          existe_noeud = verif_existe(a, c);   
         }
         Liste_vehicules *existe_vehicule;
-        existe_vehicule = verif_vehicules(a, v_id);
+        existe_vehicule = verif_vehicules(existe_noeud, v_id);
         if (existe_vehicule != NULL){
             if (existe_vehicule->purpose == 0 || existe_vehicule->purpose == -1){
                 existe_vehicule->purpose = purpose;
             }
         }
         else {
-            Liste_vehicules *new_vehicules = ajouterl_ve(purpose, v_id);
-            new_vehicules->suivant = existe_noeud->l_ve;
-            existe_noeud->l_ve = new_vehicules;
-            existe_vehicule = new_vehicules;
+            existe_vehicule = ajouter_vehicule(&existe_noeud, purpose, v_id);
         }
+        Liste_victimes *nv_victime = ajouter_victime(&existe_vehicule, type, genre, age, gravite);
     }
 }
