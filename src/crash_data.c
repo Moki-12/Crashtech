@@ -267,3 +267,5 @@ void lire_fichier (FILE *f, pArbre *a, char *nom_fichier){
         Liste_victimes *nv_victime = ajouter_victime(&existe_vehicule, type, genre, age, gravite);
     }
 }
+fclose(f);
+}
