@@ -13,6 +13,13 @@ typedef struct liste {
 } list_age;
 
 
+void viderBuffer() {
+    int c = 0;
+    while (c != '\n' && c != EOF) {
+        c = getchar();
+    }
+}
+
 age_data *creation(int a){
 age_data *nv = malloc(sizeof(age_data));
 if(nv == NULL){
@@ -192,21 +199,21 @@ void menu(list_age *l){
        do{
             printf("Choisissez le type de personne :\n-0 Tous\n-1 Conducteur\n -2 Passager\n-3 Pieton\nChoix : ");
             if (scanf("%d", &filtre_type) != 1 || filtre_type < 0 || filtre_type > 3){
-                //viderBuffer();
+                viderBuffer();
                 printf("Erreur : entrez un chiffre entre 0 et 3.\n");
             }
         }while (filtre_type < 0 || filtre_type > 3);
         do {
             printf("Choisissez le genre de la personne :\n-0 Tous\n-1 Homme\n-2 Femme\n-3 Non genre\nChoix : ");
             if (scanf("%d", &filtre_genre) != 1 || filtre_genre < 0 || filtre_genre > 3){
-                //viderBuffer();
+                viderBuffer();
                 printf("Erreur : entrez un chiffre entre 0 et 3.\n");
             }
         }while (filtre_genre < 0 || filtre_genre > 3);
         affichage(l, filtre_type, filtre_genre);
         printf("Souhaitez-vous consulter d'autres statistiques ?\n-1 Oui\n -2 Non (quitter)\nChoix : ");
         if(scanf("%d", &choix) != 1){
-            //viderBuffer();
+            viderBuffer();
             choix = 0;
         }
     }while (choix == 1);
