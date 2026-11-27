@@ -18,6 +18,7 @@ typedef struct chainon {
     struct chainon *gauche;
     struct chainon *droit;
     Liste_vehicules *l_ve;
+    int equilibre; 
 } Noeud;
 
 typedef Noeud *pArbre;
@@ -30,10 +31,11 @@ pArbre creerNoeud (int c){
     nouveau->clé = c;
     nouveau->gauche = NULL;
     nouveau->droit = NULL;
+    nouveau->equilibre = 0;
     return nouveau;
 }
 
-Liste_victimes ajouterl_vi (int t, int ge, int a, int gr){
+Liste_victimes creationl_vi (int t, int ge, int a, int gr){
 Liste_victimes *nouveau = malloc(sizeof(Liste_victimes));
 if (nouveau == NULL){
     return NULL;
@@ -46,10 +48,7 @@ nouveau->suivant = NULL;
 return nouveau;
 }
 
-Liste_vehicules ajouterl_ve (int p, int v_id){
-    if (v == NULL){
-        return NULL;
-    }
+Liste_vehicules creationl_ve (int p, int v_id){
     Liste_vehicules *nouveau = malloc(sizeof(Liste_vehicules));
     if (nouveau == NULL){
         return NULL;
@@ -192,6 +191,30 @@ Liste_vehicules *verif_vehicules (pArbre a, int v_id){
     }
     return NULL;;
 }
+
+\*void ajouter_vehicule(Arbre *accident, Liste_vehicules *nv){
+    if (accident->l_ve == NULL){
+        accident->l_ve = nv;
+        return;
+    }
+    Liste_vehicules *c = accident->l_ve;
+    while (c->suivant != NULL){
+        c = c->suivant;
+    }
+    c->suivant = nv;
+}
+
+void ajouter_victime(Liste_vehicules *vehicule, Liste_victimes *nv){
+    if (vehicule->l_vi == NULL){
+        vehicule->l_vi = nv;
+        return;
+    }
+    Liste_victimes *c = vehicule->l_vi;
+    while (c->suivant != NULL){
+        c = c->suivant;
+    }
+    c->suivant = nv;
+}*\
 
 void lire_fichier (FILE *f, pArbre a, char *nom_fichier){
     if (f == NULL || nom_fichier == NULL){
