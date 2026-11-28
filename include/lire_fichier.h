@@ -8,4 +8,4 @@ int severity;
 int genre;
 int naissance;
 int purpose;
-}Ficher;
+}ligne_ficher;
